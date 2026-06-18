@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyFlow Drive</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <div id="loginScreen" class="center-box">
+    <h1>🔒 StudyFlow</h1>
+    <p>Enter the shared password</p>
+
+    <input
+      type="password"
+      id="passwordInput"
+      placeholder="Password"
+      autocomplete="current-password"
+    />
+
+    <button id="loginBtn">
+      Login
+    </button>
+
+    <p id="loginError"></p>
+  </div>
+
+  <div id="app" style="display:none;">
+
+    <header class="topbar">
+
+      <h2>☁️ StudyFlow Drive</h2>
+
+      <div class="header-buttons">
+        <button id="refreshBtn">
+          🔄 Refresh
+        </button>
+
+        <button id="logoutBtn">
+          🚪 Logout
+        </button>
+      </div>
+
+    </header>
+
+    <section class="toolbar">
+
+      <input
+        id="searchInput"
+        placeholder="Search files..."
+      />
+
+      <button id="newFolderBtn">
+        📁 New Folder
+      </button>
+
+      <input
+        type="file"
+        id="filePicker"
+      />
+
+      <button id="uploadBtn">
+        📤 Upload
+      </button>
+
+    </section>
+
+    <section id="fileContainer">
+
+      Loading...
+
+    </section>
+
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
