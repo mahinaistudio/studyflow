@@ -516,7 +516,6 @@
             cursor: pointer;
             transition: var(--transition);
             position: relative;
-            group: true;
         }
 
         .file-card:hover {
@@ -898,7 +897,6 @@
     <!-- MAIN APP -->
     <!-- ============================================ -->
     <div id="appPage" class="app-container">
-        <!-- Header -->
         <div class="header">
             <div class="header-content">
                 <div class="header-left">
@@ -912,12 +910,8 @@
                 </div>
                 
                 <div class="header-actions">
-                    <button class="btn-sm btn-upload" id="uploadBtn">
-                        📤 Upload
-                    </button>
-                    <button class="btn-sm btn-folder" id="createFolderBtn">
-                        📁 New Folder
-                    </button>
+                    <button class="btn-sm btn-upload" id="uploadBtn">📤 Upload</button>
+                    <button class="btn-sm btn-folder" id="createFolderBtn">📁 New Folder</button>
                     <button class="btn-refresh" id="refreshBtn" title="Refresh">🔄</button>
                     <button class="btn-settings" id="settingsBtn" title="Settings">⚙️</button>
                     <button class="btn-logout" id="logoutBtn" title="Logout">🚪</button>
@@ -925,7 +919,6 @@
             </div>
         </div>
 
-        <!-- Upload Progress -->
         <div class="upload-progress-container" id="uploadProgress">
             <div class="upload-progress-content">
                 <div class="progress-info">
@@ -938,7 +931,6 @@
             </div>
         </div>
 
-        <!-- Main Content -->
         <div class="main-content" id="mainContent">
             <div class="file-grid" id="fileGrid"></div>
             <div class="empty-state" id="emptyState" style="display: none;">
@@ -959,29 +951,21 @@
         </div>
         
         <div class="settings-content">
-            <!-- Theme -->
             <div class="settings-card">
                 <h3>🎨 Theme</h3>
                 <div class="theme-toggle">
-                    <button class="theme-btn active" data-theme="light" id="lightThemeBtn">
-                        ☀️ Light
-                    </button>
-                    <button class="theme-btn" data-theme="dark" id="darkThemeBtn">
-                        🌙 Dark
-                    </button>
+                    <button class="theme-btn active" data-theme="light" id="lightThemeBtn">☀️ Light</button>
+                    <button class="theme-btn" data-theme="dark" id="darkThemeBtn">🌙 Dark</button>
                 </div>
             </div>
 
-            <!-- Change Password -->
             <div class="settings-card">
                 <h3>🔑 Change Password</h3>
                 <div class="input-group">
                     <label for="newPassword">New Password</label>
                     <input type="password" id="newPassword" placeholder="Min 3 characters">
                 </div>
-                <button class="btn btn-primary" id="changePasswordBtn" style="margin-top: 12px;">
-                    Update Password
-                </button>
+                <button class="btn btn-primary" id="changePasswordBtn" style="margin-top: 12px;">Update Password</button>
                 <div class="error-message" id="passwordChangeError"></div>
             </div>
         </div>
@@ -990,8 +974,6 @@
     <!-- ============================================ -->
     <!-- MODALS -->
     <!-- ============================================ -->
-    
-    <!-- Preview Modal -->
     <div class="modal-overlay" id="previewModal">
         <div class="modal">
             <div class="modal-header">
@@ -1002,7 +984,6 @@
         </div>
     </div>
 
-    <!-- Confirm Delete Modal -->
     <div class="modal-overlay" id="deleteModal">
         <div class="modal">
             <div class="modal-header">
@@ -1013,18 +994,13 @@
                 <p>Are you sure you want to delete <strong id="deleteItemName"></strong>?</p>
                 <p style="color: var(--text-secondary); font-size: 14px;">This action cannot be undone.</p>
                 <div style="display: flex; gap: 12px; margin-top: 20px;">
-                    <button class="btn btn-primary" onclick="closeDeleteModal()" style="background: var(--surface-hover); color: var(--text);">
-                        Cancel
-                    </button>
-                    <button class="btn btn-primary" id="confirmDeleteBtn" style="background: var(--danger);">
-                        Delete
-                    </button>
+                    <button class="btn btn-primary" onclick="closeDeleteModal()" style="background: var(--surface-hover); color: var(--text);">Cancel</button>
+                    <button class="btn btn-primary" id="confirmDeleteBtn" style="background: var(--danger);">Delete</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Folder Creation Modal -->
     <div class="modal-overlay" id="folderModal">
         <div class="modal">
             <div class="modal-header">
@@ -1036,14 +1012,11 @@
                     <label for="folderName">Folder Name</label>
                     <input type="text" id="folderName" placeholder="Enter folder name">
                 </div>
-                <button class="btn btn-primary" id="createFolderConfirmBtn" style="margin-top: 12px;">
-                    Create Folder
-                </button>
+                <button class="btn btn-primary" id="createFolderConfirmBtn" style="margin-top: 12px;">Create Folder</button>
             </div>
         </div>
     </div>
 
-    <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner">
             <div class="spinner"></div>
@@ -1051,771 +1024,645 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Drop Zone -->
     <div class="drop-zone" id="dropZone">
         <div class="icon">📤</div>
         <div>Drop files here to upload</div>
     </div>
 
-    <!-- Hidden file input -->
     <input type="file" id="fileInput" multiple style="display: none;">
 
     <script>
         // ============================================
-// CONFIGURATION
-// ============================================
-const API_URL = 'https://script.google.com/macros/s/AKfycbwSX9tmIZ-heyfdVlwejqIxYoTDc1xaFLoujGX3OFa6dDHc6FhrHGFy07h_MiWdM6DsKw/exec'; // ← YOUR URL HERE
+        // CONFIGURATION - CHANGE THIS URL
+        // ============================================
+        const API_URL = 'https://studyflow.team-gaming3436.workers.dev';
+        // Example: const API_URL = 'https://clouddrive-worker.mytempemail.workers.dev';
 
-// ============================================
-// STATE
-// ============================================
-let authToken = null;
-let currentFolderId = null;
-let folderHistory = [];
-let allFiles = [];
-let currentView = 'app';
-let itemToDelete = null;
+        // ============================================
+        // STATE
+        // ============================================
+        let authToken = null;
+        let currentFolderId = null;
+        let folderHistory = [];
+        let allFiles = [];
+        let currentView = 'app';
+        let itemToDelete = null;
 
-// ============================================
-// INITIALIZATION
-// ============================================
-document.addEventListener('DOMContentLoaded', () => {
-    const savedTheme = localStorage.getItem('clouddrive_theme');
-    if (savedTheme) {
-        document.documentElement.setAttribute('data-theme', savedTheme);
-    }
-    
-    const savedToken = localStorage.getItem('clouddrive_token');
-    if (savedToken) {
-        verifyAndLogin(savedToken);
-    }
-    
-    setupEventListeners();
-    setupDragAndDrop();
-});
-
-function setupEventListeners() {
-    document.getElementById('loginBtn').addEventListener('click', handleLogin);
-    document.getElementById('password').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleLogin();
-    });
-    
-    document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('fileInput').click());
-    document.getElementById('fileInput').addEventListener('change', handleFileSelect);
-    document.getElementById('createFolderBtn').addEventListener('click', openFolderModal);
-    document.getElementById('refreshBtn').addEventListener('click', refreshFiles);
-    document.getElementById('searchInput').addEventListener('input', handleSearch);
-    document.getElementById('settingsBtn').addEventListener('click', openSettings);
-    document.getElementById('logoutBtn').addEventListener('click', handleLogout);
-    
-    document.getElementById('backFromSettings').addEventListener('click', closeSettings);
-    document.getElementById('changePasswordBtn').addEventListener('click', handleChangePassword);
-    document.getElementById('lightThemeBtn').addEventListener('click', () => setTheme('light'));
-    document.getElementById('darkThemeBtn').addEventListener('click', () => setTheme('dark'));
-    
-    document.getElementById('createFolderConfirmBtn').addEventListener('click', handleCreateFolder);
-    document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
-    
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeAllModals();
-    });
-}
-
-// ============================================
-// API HELPER - Unified fetch function
-// ============================================
-async function apiCall(params) {
-    try {
-        let url = API_URL;
-        let options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
-        };
-
-        // For GET requests (listFiles, verifyToken)
-        if (params.method === 'GET') {
-            const queryParams = new URLSearchParams();
-            Object.keys(params.data).forEach(key => {
-                if (params.data[key] !== null && params.data[key] !== undefined) {
-                    queryParams.append(key, params.data[key]);
-                }
-            });
-            url += '?' + queryParams.toString();
-            options.method = 'GET';
-            delete options.headers;
-            delete options.body;
-        } else {
-            // For POST requests - send as JSON in the body
-            options.headers = {
-                'Content-Type': 'application/json',
-            };
-            options.body = JSON.stringify(params.data);
-        }
-
-        const response = await fetch(url, options);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-        
-        const data = await response.json();
-        return data;
-        
-    } catch (error) {
-        console.error('API Error:', error);
-        throw error;
-    }
-}
-
-// ============================================
-// AUTHENTICATION
-// ============================================
-async function handleLogin() {
-    const password = document.getElementById('password').value;
-    const rememberMe = document.getElementById('rememberMe').checked;
-    const loginBtn = document.getElementById('loginBtn');
-    const errorDiv = document.getElementById('loginError');
-    
-    if (!password) {
-        showLoginError('Please enter password');
-        return;
-    }
-    
-    loginBtn.disabled = true;
-    loginBtn.innerHTML = '<div class="spinner"></div> Verifying...';
-    errorDiv.classList.remove('show');
-    
-    try {
-        const data = await apiCall({
-            method: 'POST',
-            data: {
-                action: 'auth',
-                password: password
-            }
-        });
-        
-        if (data.success) {
-            authToken = data.token;
-            
-            if (rememberMe) {
-                localStorage.setItem('clouddrive_token', authToken);
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('clouddrive_theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
             }
             
-            showApp();
-            await loadFiles();
-            showToast('Welcome back! 👋', 'success');
-        } else {
-            showLoginError('Invalid password');
-        }
-    } catch (error) {
-        showLoginError('Connection failed. Check API URL.');
-        console.error('Login error:', error);
-    } finally {
-        loginBtn.disabled = false;
-        loginBtn.innerHTML = '<span>🔓</span> Unlock Drive';
-    }
-}
-
-async function verifyAndLogin(token) {
-    try {
-        const data = await apiCall({
-            method: 'GET',
-            data: {
-                action: 'verifyToken',
-                token: token
+            const savedToken = localStorage.getItem('clouddrive_token');
+            if (savedToken) {
+                authToken = savedToken;
+                showApp();
+                loadFiles();
             }
-        });
-        
-        if (data.valid) {
-            authToken = token;
-            showApp();
-            await loadFiles();
-        } else {
-            localStorage.removeItem('clouddrive_token');
-        }
-    } catch (error) {
-        console.error('Token verification failed:', error);
-    }
-}
-
-function showLoginError(message) {
-    const errorDiv = document.getElementById('loginError');
-    errorDiv.textContent = message;
-    errorDiv.classList.add('show');
-    setTimeout(() => errorDiv.classList.remove('show'), 3000);
-}
-
-function handleLogout() {
-    localStorage.removeItem('clouddrive_token');
-    authToken = null;
-    document.getElementById('loginPage').style.display = 'flex';
-    document.getElementById('appPage').classList.remove('active');
-    document.getElementById('settingsPage').classList.remove('active');
-    document.getElementById('password').value = '';
-}
-
-// ============================================
-// FILE OPERATIONS
-// ============================================
-async function loadFiles(folderId = null) {
-    showLoading(true);
-    
-    try {
-        const params = {
-            action: 'listFiles',
-            token: authToken
-        };
-        if (folderId) {
-            params.folderId = folderId;
-        }
-        
-        const data = await apiCall({
-            method: 'GET',
-            data: params
-        });
-        
-        if (data.success) {
-            allFiles = [...data.data.folders, ...data.data.files];
-            currentFolderId = data.data.currentFolder.id;
-            updateBreadcrumb(data.data.currentFolder.name);
-            renderFiles();
-        } else if (data.error === 'Unauthorized') {
-            handleLogout();
-        } else {
-            showToast(data.error || 'Failed to load files', 'error');
-        }
-    } catch (error) {
-        showToast('Failed to load files', 'error');
-        console.error('Load files error:', error);
-    } finally {
-        showLoading(false);
-    }
-}
-
-function renderFiles() {
-    const fileGrid = document.getElementById('fileGrid');
-    const emptyState = document.getElementById('emptyState');
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    
-    let filteredFiles = allFiles;
-    if (searchTerm) {
-        filteredFiles = allFiles.filter(item => 
-            item.name.toLowerCase().includes(searchTerm)
-        );
-    }
-    
-    if (filteredFiles.length === 0) {
-        fileGrid.innerHTML = '';
-        emptyState.style.display = 'block';
-        return;
-    }
-    
-    emptyState.style.display = 'none';
-    fileGrid.innerHTML = filteredFiles.map(item => {
-        const isFolder = !item.mimeType;
-        const icon = isFolder ? '📁' : getFileIcon(item.name, item.mimeType);
-        const size = item.size ? formatSize(item.size) : '';
-        const date = item.createdDate ? new Date(item.createdDate).toLocaleDateString() : '';
-        const escapedName = item.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        const escapedId = item.id.replace(/'/g, "\\'");
-        
-        return `
-            <div class="file-card" onclick="${isFolder ? `navigateToFolder('${escapedId}', '${escapedName}')` : `previewFile('${escapedId}', '${escapedName}', '${item.mimeType || ''}')`}">
-                <div class="card-icon">${icon}</div>
-                <div class="card-name" title="${item.name}">${item.name}</div>
-                <div class="card-meta">${size} ${date ? '· ' + date : ''}</div>
-                <div class="card-actions" onclick="event.stopPropagation();">
-                    <button class="card-btn" onclick="downloadFile('${escapedId}', '${escapedName}')">⬇️</button>
-                    <button class="card-btn delete" onclick="deleteItem('${escapedId}', '${escapedName}')">🗑️</button>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function getFileIcon(name, mimeType) {
-    const ext = name.split('.').pop().toLowerCase();
-    const iconMap = {
-        'pdf': '📄',
-        'doc': '📝', 'docx': '📝',
-        'xls': '📊', 'xlsx': '📊',
-        'ppt': '📽️', 'pptx': '📽️',
-        'jpg': '🖼️', 'jpeg': '🖼️', 'png': '🖼️', 'gif': '🖼️', 'webp': '🖼️', 'svg': '🖼️',
-        'mp4': '🎬', 'avi': '🎬', 'mov': '🎬',
-        'mp3': '🎵', 'wav': '🎵',
-        'zip': '📦', 'rar': '📦', '7z': '📦',
-        'txt': '📃', 'json': '📃', 'xml': '📃',
-        'html': '🌐', 'css': '🎨', 'js': '💻'
-    };
-    
-    if (mimeType && mimeType.startsWith('image/')) return '🖼️';
-    if (mimeType && mimeType.startsWith('video/')) return '🎬';
-    if (mimeType && mimeType.startsWith('audio/')) return '🎵';
-    
-    return iconMap[ext] || '📎';
-}
-
-async function navigateToFolder(folderId, folderName) {
-    folderHistory.push({ id: currentFolderId, name: folderName });
-    await loadFiles(folderId);
-}
-
-function updateBreadcrumb(currentName) {
-    const breadcrumb = document.getElementById('breadcrumb');
-    breadcrumb.innerHTML = `
-        <span onclick="goToRoot()">🏠 Root</span>
-        ${folderHistory.length > 0 ? '<span class="separator">/</span>' : ''}
-        ${folderHistory.map((f, i) => `
-            <span onclick="goToFolderHistory(${i})">${f.name}</span>
-            <span class="separator">/</span>
-        `).join('')}
-    `;
-}
-
-async function goToRoot() {
-    folderHistory = [];
-    await loadFiles();
-}
-
-async function goToFolderHistory(index) {
-    folderHistory = folderHistory.slice(0, index + 1);
-    const targetFolder = folderHistory[folderHistory.length - 1];
-    folderHistory.pop();
-    await loadFiles(targetFolder.id);
-}
-
-async function refreshFiles() {
-    await loadFiles(currentFolderId);
-    showToast('Refreshed 🔄', 'success');
-}
-
-function handleSearch() {
-    renderFiles();
-}
-
-// ============================================
-// UPLOAD
-// ============================================
-function handleFileSelect(event) {
-    const files = event.target.files;
-    if (files.length > 0) {
-        uploadFiles(Array.from(files));
-    }
-    event.target.value = '';
-}
-
-async function uploadFiles(files) {
-    const progressContainer = document.getElementById('uploadProgress');
-    const progressFill = document.getElementById('progressFill');
-    const progressText = document.getElementById('progressText');
-    const progressPercent = document.getElementById('progressPercent');
-    
-    progressContainer.classList.add('active');
-    
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        
-        if (file.size > 50 * 1024 * 1024) {
-            showToast(`${file.name} is too large (max 50MB)`, 'error');
-            continue;
-        }
-        
-        progressText.textContent = `Uploading ${file.name}...`;
-        progressPercent.textContent = '0%';
-        progressFill.style.width = '0%';
-        
-        try {
-            const base64 = await fileToBase64(file);
             
-            const data = await apiCall({
-                method: 'POST',
-                data: {
-                    action: 'uploadFile',
-                    token: authToken,
-                    fileName: file.name,
-                    fileData: base64.split(',')[1],
-                    mimeType: file.type || 'application/octet-stream',
-                    folderId: currentFolderId
-                }
+            setupEventListeners();
+            setupDragAndDrop();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('loginBtn').addEventListener('click', handleLogin);
+            document.getElementById('password').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
             });
             
-            if (data.success) {
-                progressPercent.textContent = '100%';
-                progressFill.style.width = '100%';
-                showToast(`${file.name} uploaded ✅`, 'success');
-            } else {
-                showToast(`Failed: ${data.error || 'Unknown error'}`, 'error');
-            }
-        } catch (error) {
-            showToast(`Error uploading ${file.name}`, 'error');
-            console.error('Upload error:', error);
-        }
-        
-        const overallPercent = Math.round(((i + 1) / files.length) * 100);
-        progressPercent.textContent = `${overallPercent}%`;
-        progressFill.style.width = `${overallPercent}%`;
-    }
-    
-    await loadFiles(currentFolderId);
-    
-    setTimeout(() => {
-        progressContainer.classList.remove('active');
-    }, 1000);
-}
-
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
-
-// ============================================
-// FOLDER OPERATIONS
-// ============================================
-function openFolderModal() {
-    document.getElementById('folderModal').classList.add('active');
-    document.getElementById('folderName').value = '';
-    document.getElementById('folderName').focus();
-}
-
-function closeFolderModal() {
-    document.getElementById('folderModal').classList.remove('active');
-    document.getElementById('folderName').value = '';
-}
-
-async function handleCreateFolder() {
-    const folderName = document.getElementById('folderName').value.trim();
-    
-    if (!folderName) {
-        showToast('Please enter a folder name', 'error');
-        return;
-    }
-    
-    showLoading(true);
-    
-    try {
-        const data = await apiCall({
-            method: 'POST',
-            data: {
-                action: 'createFolder',
-                token: authToken,
-                folderName: folderName,
-                parentFolderId: currentFolderId
-            }
-        });
-        
-        if (data.success) {
-            showToast(`Folder "${folderName}" created 📁`, 'success');
-            closeFolderModal();
-            await loadFiles(currentFolderId);
-        } else {
-            showToast(data.error || 'Failed to create folder', 'error');
-        }
-    } catch (error) {
-        showToast('Failed to create folder', 'error');
-        console.error('Create folder error:', error);
-    } finally {
-        showLoading(false);
-    }
-}
-
-// ============================================
-// PREVIEW
-// ============================================
-async function previewFile(fileId, fileName, mimeType) {
-    const previewModal = document.getElementById('previewModal');
-    const previewTitle = document.getElementById('previewTitle');
-    const previewBody = document.getElementById('previewBody');
-    
-    previewTitle.textContent = fileName;
-    previewModal.classList.add('active');
-    
-    const isImage = mimeType && mimeType.startsWith('image/');
-    const isPDF = mimeType === 'application/pdf' || fileName.toLowerCase().endsWith('.pdf');
-    
-    if (isImage) {
-        try {
-            const data = await apiCall({
-                method: 'POST',
-                data: {
-                    action: 'downloadFile',
-                    token: authToken,
-                    fileId: fileId
-                }
-            });
+            document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+            document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+            document.getElementById('createFolderBtn').addEventListener('click', openFolderModal);
+            document.getElementById('refreshBtn').addEventListener('click', refreshFiles);
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+            document.getElementById('settingsBtn').addEventListener('click', openSettings);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
             
-            if (data.success) {
-                previewBody.innerHTML = `<img src="data:${data.file.mimeType};base64,${data.file.data}" class="preview-image" alt="${fileName}">`;
-            } else {
-                previewBody.innerHTML = '<p>Failed to load preview</p>';
-            }
-        } catch (error) {
-            previewBody.innerHTML = '<p>Failed to load preview</p>';
-            console.error('Preview error:', error);
+            document.getElementById('backFromSettings').addEventListener('click', closeSettings);
+            document.getElementById('changePasswordBtn').addEventListener('click', handleChangePassword);
+            document.getElementById('lightThemeBtn').addEventListener('click', () => setTheme('light'));
+            document.getElementById('darkThemeBtn').addEventListener('click', () => setTheme('dark'));
+            
+            document.getElementById('createFolderConfirmBtn').addEventListener('click', handleCreateFolder);
+            document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeAllModals();
+            });
         }
-    } else if (isPDF) {
-        previewBody.innerHTML = `<iframe src="https://drive.google.com/file/d/${fileId}/preview" class="preview-pdf"></iframe>`;
-    } else {
-        previewBody.innerHTML = `
-            <div style="text-align: center; padding: 40px;">
-                <div style="font-size: 64px; margin-bottom: 16px;">📄</div>
-                <p>Preview not available for this file type</p>
-                <button class="btn btn-primary" onclick="downloadFile('${fileId}', '${fileName}')" style="margin-top: 16px;">
-                    ⬇️ Download Instead
-                </button>
-            </div>
-        `;
-    }
-}
 
-function closePreview() {
-    document.getElementById('previewModal').classList.remove('active');
-    document.getElementById('previewBody').innerHTML = '';
-}
+        // ============================================
+        // API HELPER
+        // ============================================
+        async function apiCall(method, data) {
+            try {
+                let url = API_URL;
+                let options = {};
 
-// ============================================
-// DOWNLOAD
-// ============================================
-async function downloadFile(fileId, fileName) {
-    showLoading(true);
-    
-    try {
-        const data = await apiCall({
-            method: 'POST',
-            data: {
-                action: 'downloadFile',
-                token: authToken,
-                fileId: fileId
+                if (method === 'GET') {
+                    const params = new URLSearchParams(data);
+                    url += '?' + params.toString();
+                } else {
+                    options.method = 'POST';
+                    options.headers = { 'Content-Type': 'application/json' };
+                    options.body = JSON.stringify(data);
+                }
+
+                const response = await fetch(url, options);
+                
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error || 'Request failed');
+                }
+                
+                return await response.json();
+                
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
             }
-        });
-        
-        if (data.success) {
-            const link = document.createElement('a');
-            link.href = `data:${data.file.mimeType};base64,${data.file.data}`;
-            link.download = data.file.name;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showToast(`Downloading ${fileName} ⬇️`, 'success');
-        } else {
-            showToast('Download failed', 'error');
         }
-    } catch (error) {
-        showToast('Download failed', 'error');
-        console.error('Download error:', error);
-    } finally {
-        showLoading(false);
-    }
-}
 
-// ============================================
-// DELETE
-// ============================================
-function deleteItem(fileId, fileName) {
-    itemToDelete = { id: fileId, name: fileName };
-    document.getElementById('deleteItemName').textContent = fileName;
-    document.getElementById('deleteModal').classList.add('active');
-}
-
-function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.remove('active');
-    itemToDelete = null;
-}
-
-async function confirmDelete() {
-    if (!itemToDelete) return;
-    
-    showLoading(true);
-    
-    try {
-        const data = await apiCall({
-            method: 'POST',
-            data: {
-                action: 'deleteFile',
-                token: authToken,
-                fileId: itemToDelete.id
+        // ============================================
+        // AUTHENTICATION
+        // ============================================
+        async function handleLogin() {
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorDiv = document.getElementById('loginError');
+            
+            if (!password) {
+                showLoginError('Please enter password');
+                return;
             }
-        });
-        
-        if (data.success) {
-            showToast(`Deleted "${itemToDelete.name}" 🗑️`, 'success');
-            closeDeleteModal();
-            await loadFiles(currentFolderId);
-        } else {
-            showToast('Delete failed', 'error');
+            
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<div class="spinner"></div> Verifying...';
+            errorDiv.classList.remove('show');
+            
+            try {
+                const data = await apiCall('POST', { action: 'auth', password });
+                
+                if (data.success) {
+                    authToken = data.token;
+                    
+                    if (rememberMe) {
+                        localStorage.setItem('clouddrive_token', authToken);
+                    }
+                    
+                    showApp();
+                    await loadFiles();
+                    showToast('Welcome back! 👋', 'success');
+                } else {
+                    showLoginError(data.message || 'Invalid password');
+                }
+            } catch (error) {
+                showLoginError('Connection failed. Check API URL.');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<span>🔓</span> Unlock Drive';
+            }
         }
-    } catch (error) {
-        showToast('Delete failed', 'error');
-        console.error('Delete error:', error);
-    } finally {
-        showLoading(false);
-    }
-}
 
-// ============================================
-// SETTINGS
-// ============================================
-function openSettings() {
-    currentView = 'settings';
-    document.getElementById('appPage').classList.remove('active');
-    document.getElementById('settingsPage').classList.add('active');
-    
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-    document.getElementById('lightThemeBtn').classList.toggle('active', currentTheme === 'light');
-    document.getElementById('darkThemeBtn').classList.toggle('active', currentTheme === 'dark');
-}
-
-function closeSettings() {
-    currentView = 'app';
-    document.getElementById('settingsPage').classList.remove('active');
-    document.getElementById('appPage').classList.add('active');
-}
-
-function setTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('clouddrive_theme', theme);
-    document.getElementById('lightThemeBtn').classList.toggle('active', theme === 'light');
-    document.getElementById('darkThemeBtn').classList.toggle('active', theme === 'dark');
-}
-
-async function handleChangePassword() {
-    const newPassword = document.getElementById('newPassword').value;
-    const errorDiv = document.getElementById('passwordChangeError');
-    
-    if (!newPassword || newPassword.length < 3) {
-        errorDiv.textContent = 'Password must be at least 3 characters';
-        errorDiv.classList.add('show');
-        setTimeout(() => errorDiv.classList.remove('show'), 3000);
-        return;
-    }
-    
-    showLoading(true);
-    
-    try {
-        const data = await apiCall({
-            method: 'POST',
-            data: {
-                action: 'changePassword',
-                token: authToken,
-                newPassword: newPassword
-            }
-        });
-        
-        if (data.success) {
-            showToast('Password updated successfully! 🔐', 'success');
-            document.getElementById('newPassword').value = '';
-        } else {
-            errorDiv.textContent = data.error || 'Failed to update password';
+        function showLoginError(message) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = message;
             errorDiv.classList.add('show');
             setTimeout(() => errorDiv.classList.remove('show'), 3000);
         }
-    } catch (error) {
-        errorDiv.textContent = 'Failed to update password';
-        errorDiv.classList.add('show');
-        setTimeout(() => errorDiv.classList.remove('show'), 3000);
-    } finally {
-        showLoading(false);
-    }
-}
 
-// ============================================
-// DRAG & DROP
-// ============================================
-function setupDragAndDrop() {
-    const dropZone = document.getElementById('dropZone');
-    
-    document.addEventListener('dragenter', (e) => {
-        e.preventDefault();
-        if (currentView === 'app') {
-            dropZone.classList.add('active');
+        function handleLogout() {
+            localStorage.removeItem('clouddrive_token');
+            authToken = null;
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('appPage').classList.remove('active');
+            document.getElementById('settingsPage').classList.remove('active');
+            document.getElementById('password').value = '';
         }
-    });
-    
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-    });
-    
-    dropZone.addEventListener('dragleave', (e) => {
-        if (e.target === dropZone) {
-            dropZone.classList.remove('active');
+
+        // ============================================
+        // FILE OPERATIONS
+        // ============================================
+        async function loadFiles(folderId = null) {
+            showLoading(true);
+            
+            try {
+                const params = { action: 'listFiles', token: authToken };
+                if (folderId) params.folderId = folderId;
+                
+                const data = await apiCall('GET', params);
+                
+                if (data.success) {
+                    allFiles = [...data.data.folders, ...data.data.files];
+                    currentFolderId = data.data.currentFolder.id;
+                    updateBreadcrumb(data.data.currentFolder.name);
+                    renderFiles();
+                } else {
+                    showToast(data.error || 'Failed to load files', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to load files', 'error');
+            } finally {
+                showLoading(false);
+            }
         }
-    });
-    
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('active');
-        const files = Array.from(e.dataTransfer.files);
-        if (files.length > 0) {
-            uploadFiles(files);
+
+        function renderFiles() {
+            const fileGrid = document.getElementById('fileGrid');
+            const emptyState = document.getElementById('emptyState');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filteredFiles = allFiles;
+            if (searchTerm) {
+                filteredFiles = allFiles.filter(item => 
+                    item.name.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (filteredFiles.length === 0) {
+                fileGrid.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            fileGrid.innerHTML = filteredFiles.map(item => {
+                const isFolder = !item.mimeType;
+                const icon = isFolder ? '📁' : getFileIcon(item.name, item.mimeType);
+                const size = item.size ? formatSize(item.size) : '';
+                const date = item.createdDate ? new Date(item.createdDate).toLocaleDateString() : '';
+                
+                return `
+                    <div class="file-card" onclick="${isFolder ? `navigateToFolder('${item.id}', '${escapeHtml(item.name)}')` : `previewFile('${item.id}', '${escapeHtml(item.name)}', '${item.mimeType || ''}')`}">
+                        <div class="card-icon">${icon}</div>
+                        <div class="card-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
+                        <div class="card-meta">${size} ${date ? '· ' + date : ''}</div>
+                        <div class="card-actions" onclick="event.stopPropagation();">
+                            <button class="card-btn" onclick="downloadFile('${item.id}', '${escapeHtml(item.name)}')">⬇️</button>
+                            <button class="card-btn delete" onclick="deleteItem('${item.id}', '${escapeHtml(item.name)}')">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
-    });
-    
-    document.addEventListener('drop', (e) => e.preventDefault());
-    document.addEventListener('dragover', (e) => e.preventDefault());
-}
 
-// ============================================
-// UI HELPERS
-// ============================================
-function showApp() {
-    document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('appPage').classList.add('active');
-    document.getElementById('settingsPage').classList.remove('active');
-}
+        function escapeHtml(text) {
+            return text.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
 
-function showLoading(show) {
-    const overlay = document.getElementById('loadingOverlay');
-    if (show) {
-        overlay.classList.add('active');
-    } else {
-        overlay.classList.remove('active');
-    }
-}
+        function getFileIcon(name, mimeType) {
+            const ext = name.split('.').pop().toLowerCase();
+            const iconMap = {
+                'pdf': '📄', 'doc': '📝', 'docx': '📝', 'xls': '📊', 'xlsx': '📊',
+                'ppt': '📽️', 'pptx': '📽️', 'jpg': '🖼️', 'jpeg': '🖼️', 'png': '🖼️',
+                'gif': '🖼️', 'webp': '🖼️', 'svg': '🖼️', 'mp4': '🎬', 'avi': '🎬',
+                'mov': '🎬', 'mp3': '🎵', 'wav': '🎵', 'zip': '📦', 'rar': '📦',
+                '7z': '📦', 'txt': '📃', 'json': '📃', 'xml': '📃',
+                'html': '🌐', 'css': '🎨', 'js': '💻'
+            };
+            if (mimeType && mimeType.startsWith('image/')) return '🖼️';
+            if (mimeType && mimeType.startsWith('video/')) return '🎬';
+            if (mimeType && mimeType.startsWith('audio/')) return '🎵';
+            return iconMap[ext] || '📎';
+        }
 
-function showToast(message, type = 'info') {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(100%)';
-        toast.style.transition = 'all 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
+        async function navigateToFolder(folderId, folderName) {
+            folderHistory.push({ id: currentFolderId, name: folderName });
+            await loadFiles(folderId);
+        }
 
-function closeAllModals() {
-    document.querySelectorAll('.modal-overlay.active').forEach(modal => {
-        modal.classList.remove('active');
-    });
-    document.getElementById('previewBody').innerHTML = '';
-    itemToDelete = null;
-}
+        function updateBreadcrumb() {
+            const breadcrumb = document.getElementById('breadcrumb');
+            breadcrumb.innerHTML = `
+                <span onclick="goToRoot()">🏠 Root</span>
+                ${folderHistory.map((f, i) => `
+                    <span class="separator">/</span>
+                    <span onclick="goToFolderHistory(${i})">${escapeHtml(f.name)}</span>
+                `).join('')}
+            `;
+        }
 
-function formatSize(bytes) {
-    if (!bytes || bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-}
+        async function goToRoot() {
+            folderHistory = [];
+            await loadFiles();
+        }
 
-document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('modal-overlay')) {
-        closeAllModals();
-    }
-});
+        async function goToFolderHistory(index) {
+            folderHistory = folderHistory.slice(0, index + 1);
+            const target = folderHistory[folderHistory.length - 1];
+            folderHistory.pop();
+            await loadFiles(target.id);
+        }
+
+        async function refreshFiles() {
+            await loadFiles(currentFolderId);
+            showToast('Refreshed 🔄', 'success');
+        }
+
+        function handleSearch() {
+            renderFiles();
+        }
+
+        // ============================================
+        // UPLOAD
+        // ============================================
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            if (files.length > 0) uploadFiles(Array.from(files));
+            event.target.value = '';
+        }
+
+        async function uploadFiles(files) {
+            const progressContainer = document.getElementById('uploadProgress');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const progressPercent = document.getElementById('progressPercent');
+            
+            progressContainer.classList.add('active');
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                progressText.textContent = `Uploading ${file.name}...`;
+                progressPercent.textContent = '0%';
+                progressFill.style.width = '0%';
+                
+                try {
+                    const base64 = await fileToBase64(file);
+                    
+                    const data = await apiCall('POST', {
+                        action: 'uploadFile',
+                        token: authToken,
+                        fileName: file.name,
+                        fileData: base64,
+                        mimeType: file.type || 'application/octet-stream',
+                        folderId: currentFolderId
+                    });
+                    
+                    if (data.success) {
+                        progressPercent.textContent = '100%';
+                        progressFill.style.width = '100%';
+                        showToast(`${file.name} uploaded ✅`, 'success');
+                    } else {
+                        showToast(`Failed: ${data.error || 'Unknown error'}`, 'error');
+                    }
+                } catch (error) {
+                    showToast(`Error uploading ${file.name}`, 'error');
+                }
+                
+                const overallPercent = Math.round(((i + 1) / files.length) * 100);
+                progressPercent.textContent = `${overallPercent}%`;
+                progressFill.style.width = `${overallPercent}%`;
+            }
+            
+            await loadFiles(currentFolderId);
+            
+            setTimeout(() => progressContainer.classList.remove('active'), 1000);
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ============================================
+        // FOLDER OPERATIONS
+        // ============================================
+        function openFolderModal() {
+            document.getElementById('folderModal').classList.add('active');
+            document.getElementById('folderName').value = '';
+            document.getElementById('folderName').focus();
+        }
+
+        function closeFolderModal() {
+            document.getElementById('folderModal').classList.remove('active');
+        }
+
+        async function handleCreateFolder() {
+            const folderName = document.getElementById('folderName').value.trim();
+            if (!folderName) { showToast('Please enter a folder name', 'error'); return; }
+            
+            showLoading(true);
+            try {
+                const data = await apiCall('POST', {
+                    action: 'createFolder',
+                    token: authToken,
+                    folderName,
+                    parentFolderId: currentFolderId
+                });
+                
+                if (data.success) {
+                    showToast(`Folder "${folderName}" created 📁`, 'success');
+                    closeFolderModal();
+                    await loadFiles(currentFolderId);
+                } else {
+                    showToast(data.error || 'Failed to create folder', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to create folder', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // ============================================
+        // PREVIEW
+        // ============================================
+        async function previewFile(fileId, fileName, mimeType) {
+            const previewModal = document.getElementById('previewModal');
+            const previewTitle = document.getElementById('previewTitle');
+            const previewBody = document.getElementById('previewBody');
+            
+            previewTitle.textContent = fileName;
+            previewModal.classList.add('active');
+            
+            const isImage = mimeType && mimeType.startsWith('image/');
+            const isPDF = mimeType === 'application/pdf' || fileName.toLowerCase().endsWith('.pdf');
+            
+            if (isImage) {
+                try {
+                    const data = await apiCall('POST', {
+                        action: 'downloadFile',
+                        token: authToken,
+                        fileId
+                    });
+                    
+                    if (data.success) {
+                        previewBody.innerHTML = `<img src="data:${data.file.mimeType};base64,${data.file.data}" class="preview-image" alt="${escapeHtml(fileName)}">`;
+                    } else {
+                        previewBody.innerHTML = '<p>Failed to load preview</p>';
+                    }
+                } catch (error) {
+                    previewBody.innerHTML = '<p>Failed to load preview</p>';
+                }
+            } else if (isPDF) {
+                previewBody.innerHTML = `<iframe src="https://drive.google.com/file/d/${fileId}/preview" class="preview-pdf"></iframe>`;
+            } else {
+                previewBody.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 64px; margin-bottom: 16px;">📄</div>
+                        <p>Preview not available</p>
+                        <button class="btn btn-primary" onclick="downloadFile('${fileId}', '${escapeHtml(fileName)}')" style="margin-top: 16px;">⬇️ Download Instead</button>
+                    </div>`;
+            }
+        }
+
+        function closePreview() {
+            document.getElementById('previewModal').classList.remove('active');
+            document.getElementById('previewBody').innerHTML = '';
+        }
+
+        // ============================================
+        // DOWNLOAD
+        // ============================================
+        async function downloadFile(fileId, fileName) {
+            showLoading(true);
+            try {
+                const data = await apiCall('POST', {
+                    action: 'downloadFile',
+                    token: authToken,
+                    fileId
+                });
+                
+                if (data.success) {
+                    const link = document.createElement('a');
+                    link.href = `data:${data.file.mimeType};base64,${data.file.data}`;
+                    link.download = data.file.name;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    showToast(`Downloading ${fileName} ⬇️`, 'success');
+                } else {
+                    showToast('Download failed', 'error');
+                }
+            } catch (error) {
+                showToast('Download failed', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // ============================================
+        // DELETE
+        // ============================================
+        function deleteItem(fileId, fileName) {
+            itemToDelete = { id: fileId, name: fileName };
+            document.getElementById('deleteItemName').textContent = fileName;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+            itemToDelete = null;
+        }
+
+        async function confirmDelete() {
+            if (!itemToDelete) return;
+            showLoading(true);
+            try {
+                const data = await apiCall('POST', {
+                    action: 'deleteFile',
+                    token: authToken,
+                    fileId: itemToDelete.id
+                });
+                
+                if (data.success) {
+                    showToast(`Deleted "${itemToDelete.name}" 🗑️`, 'success');
+                    closeDeleteModal();
+                    await loadFiles(currentFolderId);
+                } else {
+                    showToast('Delete failed', 'error');
+                }
+            } catch (error) {
+                showToast('Delete failed', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // ============================================
+        // SETTINGS
+        // ============================================
+        function openSettings() {
+            currentView = 'settings';
+            document.getElementById('appPage').classList.remove('active');
+            document.getElementById('settingsPage').classList.add('active');
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            document.getElementById('lightThemeBtn').classList.toggle('active', currentTheme === 'light');
+            document.getElementById('darkThemeBtn').classList.toggle('active', currentTheme === 'dark');
+        }
+
+        function closeSettings() {
+            currentView = 'app';
+            document.getElementById('settingsPage').classList.remove('active');
+            document.getElementById('appPage').classList.add('active');
+        }
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('clouddrive_theme', theme);
+            document.getElementById('lightThemeBtn').classList.toggle('active', theme === 'light');
+            document.getElementById('darkThemeBtn').classList.toggle('active', theme === 'dark');
+        }
+
+        async function handleChangePassword() {
+            const newPassword = document.getElementById('newPassword').value;
+            const errorDiv = document.getElementById('passwordChangeError');
+            
+            if (!newPassword || newPassword.length < 3) {
+                errorDiv.textContent = 'Password must be at least 3 characters';
+                errorDiv.classList.add('show');
+                setTimeout(() => errorDiv.classList.remove('show'), 3000);
+                return;
+            }
+            
+            showLoading(true);
+            try {
+                const data = await apiCall('POST', {
+                    action: 'changePassword',
+                    token: authToken,
+                    newPassword
+                });
+                
+                if (data.success) {
+                    showToast('Password updated successfully! 🔐', 'success');
+                    document.getElementById('newPassword').value = '';
+                } else {
+                    errorDiv.textContent = data.error || 'Failed to update password';
+                    errorDiv.classList.add('show');
+                    setTimeout(() => errorDiv.classList.remove('show'), 3000);
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Failed to update password';
+                errorDiv.classList.add('show');
+                setTimeout(() => errorDiv.classList.remove('show'), 3000);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // ============================================
+        // DRAG & DROP
+        // ============================================
+        function setupDragAndDrop() {
+            const dropZone = document.getElementById('dropZone');
+            
+            document.addEventListener('dragenter', (e) => {
+                e.preventDefault();
+                if (currentView === 'app') dropZone.classList.add('active');
+            });
+            
+            dropZone.addEventListener('dragover', (e) => e.preventDefault());
+            
+            dropZone.addEventListener('dragleave', (e) => {
+                if (e.target === dropZone) dropZone.classList.remove('active');
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('active');
+                const files = Array.from(e.dataTransfer.files);
+                if (files.length > 0) uploadFiles(files);
+            });
+            
+            document.addEventListener('drop', (e) => e.preventDefault());
+            document.addEventListener('dragover', (e) => e.preventDefault());
+        }
+
+        // ============================================
+        // UI HELPERS
+        // ============================================
+        function showApp() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('appPage').classList.add('active');
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').classList.toggle('active', show);
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function closeAllModals() {
+            document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+            document.getElementById('previewBody').innerHTML = '';
+            itemToDelete = null;
+        }
+
+        function formatSize(bytes) {
+            if (!bytes || bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) closeAllModals();
+        });
     </script>
 </body>
 </html>
